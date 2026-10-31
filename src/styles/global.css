@@ -46,3 +46,27 @@ h1 { font-size: 1.5rem; margin: var(--space-2) 0 var(--space-3); }
 .status { display: inline-flex; gap: var(--space-2); align-items: center; padding: var(--space-1) var(--space-3); border-radius: 999px; border: 2px solid var(--color-border); font-weight: 600; }
 .status--offline { background: var(--color-warn-bg); }
 .stack { display: grid; gap: var(--space-3); }
+
+/* ---- Formularios (criterios 7 y 8) ---- */
+.field { display: grid; gap: var(--space-1); }
+.field__label { font-weight: 700; }
+.field__hint { margin: 0; color: var(--color-text-soft); }
+.field__input { min-height: var(--tap); padding: 0 var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius); font: inherit; background: var(--color-surface); color: var(--color-text); }
+.field__input--error { border-color: var(--color-danger); }
+.field__error { margin: 0; color: var(--color-danger); font-weight: 700; }
+button:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---- Clave y teclado ---- */
+.pin-dots { display: flex; gap: var(--space-2); justify-content: center; margin: var(--space-3) 0; }
+.pin-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--color-border); }
+.pin-dot--on { background: var(--color-text); }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3); }
+.key { min-height: 64px; border-radius: var(--radius); border: 2px solid var(--color-border); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 1.5rem; font-weight: 700; cursor: pointer; }
+.key--danger { border-color: var(--color-danger); color: var(--color-danger); }
+
+/* ---- Selección de imagen ---- */
+.avatar-set { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); border: 0; padding: 0; margin: 0 0 var(--space-3); }
+.avatar-set legend { font-weight: 700; margin-bottom: var(--space-3); padding: 0; }
+.avatar-option { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-3); border: 3px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); font-weight: 700; cursor: pointer; }
+.avatar-option--on { border-color: var(--color-primary); background: #e8f3ea; }
+.avatar-option:has(input:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: 2px; }

@@ -7,7 +7,7 @@ export function Layout() {
   return (
     <>
       <SkipLink />
-      <TopBar showBack={pathname !== '/inicio'} />
+      <TopBar showBack={pathname !== '/' && pathname !== '/inicio'} />
       <main id="contenido" tabIndex={-1}>
         <Outlet />
       </main>
