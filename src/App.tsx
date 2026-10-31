@@ -8,6 +8,10 @@ import { VerifyCode } from './pages/VerifyCode.tsx';
 import { CreatePin } from './pages/CreatePin.tsx';
 import { ChooseAvatar } from './pages/ChooseAvatar.tsx';
 import { Login } from './pages/Login.tsx';
+import { NewSale } from './pages/NewSale.tsx';
+import { Payment } from './pages/Payment.tsx';
+import { SaleDone } from './pages/SaleDone.tsx';
+import { ExitSale } from './pages/ExitSale.tsx';
 import { RequireAccount } from './ui/RequireAccount.tsx';
 
 export default function App() {
@@ -24,9 +28,10 @@ export default function App() {
         <Route element={<RequireAccount />}>
         <Route path="inicio" element={<Home />} />
         {/* Etapa 3: venta */}
-        <Route path="venta" element={<Pending title="Nueva venta" stage={3} />} />
-        <Route path="venta/pago" element={<Pending title="¿Cómo pagó?" stage={3} />} />
-        <Route path="venta/listo" element={<Pending title="Venta guardada" stage={3} />} />
+        <Route path="venta" element={<NewSale />} />
+        <Route path="venta/pago" element={<Payment />} />
+        <Route path="venta/listo" element={<SaleDone />} />
+        <Route path="venta/salir" element={<ExitSale />} />
         {/* Etapa 4: historial y balance */}
         <Route path="ventas" element={<Pending title="Ventas de hoy" stage={4} />} />
         <Route path="ventas/:id" element={<Pending title="Detalle de la venta" stage={4} />} />

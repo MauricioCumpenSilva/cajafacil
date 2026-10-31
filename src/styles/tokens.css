@@ -22,3 +22,8 @@
   --space-4: 24px;
   --radius: 14px;
 }
+
+:root {
+  --color-yape: #6d28d9;   /* morado: Yape / Plin */
+  --color-fiado: #b45309;  /* ámbar: Fiado */
+}

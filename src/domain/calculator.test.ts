@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { calcReducer, initialCalc, totalCents, entryText, canContinue } from './calculator.ts';
+import { calcReducer, initialCalc, totalCents, entryText, canContinue, breakdownText, SHORTCUTS_CENTS } from './calculator.ts';
 import type { CalcAction, CalcState } from './calculator.ts';
 
 const run = (actions: CalcAction[], from: CalcState = initialCalc) => actions.reduce(calcReducer, from);
@@ -76,4 +76,15 @@ test('no se puede continuar con total 0', () => {
 
 test('clear reinicia', () => {
   assert.deepEqual(run([d(5), { type: 'clear' }]), initialCalc);
+});
+
+test('desglose de la suma en texto', () => {
+  assert.equal(breakdownText(initialCalc), '');
+  const s = run([{ type: 'preset', cents: 250 }, { type: 'preset', cents: 500 }, d(3)]);
+  assert.equal(breakdownText(s), '2.50 + 5.00 + 3');
+  assert.equal(breakdownText(run([d(1), d(0), dot, d(7)])), '10.7');
+});
+
+test('atajos: 1, 1.50, 2.50, 5 y 10', () => {
+  assert.deepEqual([...SHORTCUTS_CENTS], [100, 150, 250, 500, 1000]);
 });

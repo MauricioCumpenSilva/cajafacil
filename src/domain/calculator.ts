@@ -22,6 +22,9 @@ export type CalcAction =
   | { type: 'plus' }
   | { type: 'clear' };
 
+/** Atajos de billetes y monedas en céntimos: S/ 1, 1.50, 2.50, 5 y 10. */
+export const SHORTCUTS_CENTS: readonly Cents[] = [100, 150, 250, 500, 1000];
+
 export const MAX_INT_DIGITS = 5;
 export const MAX_DEC_DIGITS = 2;
 
@@ -77,4 +80,12 @@ export function calcReducer(s: CalcState, a: CalcAction): CalcState {
     case 'clear':
       return initialCalc;
   }
+}
+
+/** Explica la suma al usuario, p. ej. "2.50 + 5.00 + 3". Vacío si no hay nada que explicar. */
+export function breakdownText(s: CalcState): string {
+  if (s.parts.length === 0 && !s.hasDot) return '';
+  const parts = s.parts.map((c) => (c / 100).toFixed(2));
+  const cur = entryCents(s) > 0 || s.hasDot ? [entryText(s)] : [];
+  return [...parts, ...cur].join(' + ');
 }

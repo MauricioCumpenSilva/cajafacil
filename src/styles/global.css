@@ -70,3 +70,35 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .avatar-option { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-3); border: 3px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); font-weight: 700; cursor: pointer; }
 .avatar-option--on { border-color: var(--color-primary); background: #e8f3ea; }
 .avatar-option:has(input:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+/* ---- Nueva venta ---- */
+.step { margin: 0; display: inline-block; padding: var(--space-1) var(--space-3); border-radius: 999px; background: #ece7df; font-weight: 600; }
+.h2 { font-size: 1.125rem; margin: 0; font-weight: 700; padding: 0; }
+.display { background: var(--color-surface); border: 3px solid var(--color-info); border-radius: var(--radius); padding: var(--space-3); margin-bottom: var(--space-3); min-height: 96px; }
+.display__amount { display: block; font-size: 2.5rem; font-weight: 800; line-height: 1.1; }
+.display__amount--small { font-size: 1.5rem; margin: 0 0 var(--space-3); }
+.display__breakdown { margin: var(--space-1) 0 0; color: var(--color-text-soft); }
+.shortcuts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+.chip { min-height: var(--tap); min-width: var(--tap); padding: 0 var(--space-3); border-radius: 999px; border: 2px solid var(--color-border); background: var(--color-surface); color: var(--color-text); font: inherit; font-weight: 700; cursor: pointer; }
+.chip--info { border-color: var(--color-info); color: var(--color-info); }
+.chip[aria-pressed="true"] { background: var(--color-text); color: #fff; border-color: var(--color-text); }
+.keypad--4 { grid-template-columns: repeat(4, 1fr); }
+.key--plus { background: var(--color-info); border-color: var(--color-info); color: #fff; }
+
+/* ---- Método de pago: cada uno con su color ---- */
+.methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.method { min-height: 56px; border-radius: var(--radius); border: 3px solid; background: var(--color-surface); font: inherit; font-weight: 800; cursor: pointer; }
+.method--efectivo { border-color: var(--color-primary); color: var(--color-primary); }
+.method--yape { border-color: var(--color-yape); color: var(--color-yape); }
+.method--fiado { border-color: var(--color-fiado); color: var(--color-fiado); }
+.method--efectivo.method--on { background: var(--color-primary); color: #fff; }
+.method--yape.method--on { background: var(--color-yape); color: #fff; }
+.method--fiado.method--on { background: var(--color-fiado); color: #fff; }
+.change { font-size: 1.25rem; margin: 0; }
+.customer-set { border: 0; padding: 0; margin: var(--space-3) 0 0; }
+.choice { display: flex; align-items: center; min-height: var(--tap); padding: 0 var(--space-3); border: 3px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); font-weight: 700; cursor: pointer; }
+.choice--on { border-color: var(--color-fiado); background: #fdf0e1; }
+.choice:has(input:focus-visible) { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.btn--danger { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
+.done-check { margin: 0; width: 72px; height: 72px; line-height: 72px; justify-self: center; border-radius: 50%; background: var(--color-primary); color: #fff; font-size: 2.5rem; font-weight: 800; }
+.detail-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }

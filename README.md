@@ -27,8 +27,8 @@ Para agregar una mejora (por ejemplo un aviso al guardar la venta): se agrega un
 ## Etapas
 
 1. **Base** (hecha): estructura, estilos, rutas, barra superior con ayuda "?", skip link, Inicio con total del día, lógica de ventas con pruebas.
-2. Cuenta y acceso (formularios con labels, autocomplete y errores en texto).
-3. Nueva venta: teclado, atajos, +, método de pago, vuelto, guardar, venta guardada, salir sin guardar.
+2. **Cuenta y acceso** (hecha): bienvenida, crear cuenta, código de demostración (123456), clave de 6 números, imagen, entrar. "Ya tengo cuenta" solo funciona si la cuenta fue creada.
+3. **Nueva venta** (hecha): teclado con punto decimal, atajos, botón +, método de pago (Efectivo con vuelto, Yape/Plin, Fiado), guardar, venta guardada y salir sin guardar. Inicio suma lo cobrado hoy.
 4. Ventas de hoy, detalle, anulación y balance.
 5. Fiados, cobro, Mi cuenta y modo sin conexión (service worker).
 6. Accesibilidad completa y reporte WAVE o axe.
