@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSaleFlow } from '../state/SaleFlowContext.tsx';
 import { helpFor } from '../domain/guide.ts';
@@ -18,6 +18,16 @@ export function Layout() {
 
   // Al cambiar de pantalla se cierra la ayuda anterior.
   useEffect(() => { setHelpOpen(false); }, [pathname]);
+
+  // Accesibilidad en una app de una sola página: título nuevo y foco al encabezado, para que el lector
+  // de pantalla anuncie la pantalla a la que se llegó (no en la carga inicial).
+  const firstRender = useRef(true);
+  useEffect(() => {
+    document.title = entry ? `${entry.title} · CajaFácil` : 'CajaFácil';
+    if (firstRender.current) { firstRender.current = false; return; }
+    const h1 = document.querySelector<HTMLElement>('main h1');
+    if (h1) { h1.tabIndex = -1; h1.focus({ preventScroll: false }); }
+  }, [pathname, entry]);
 
   /** Volver con sentido: no se pierde un monto sin avisar y no se regresa a pantallas ya cerradas. */
   const onBack = () => {

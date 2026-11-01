@@ -25,10 +25,12 @@ export function HelpSheet({ entry, onClose }: { entry: HelpEntry; onClose: () =>
   }, [step]);
 
   useEffect(() => {
+    // Al cerrar, el foco vuelve al botón "?" que abrió la ayuda.
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); opener?.focus?.(); };
   }, [onClose]);
 
   return (

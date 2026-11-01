@@ -5,7 +5,7 @@ import { Spinner } from '../ui/Spinner.tsx';
 import { formatSoles } from '../domain/money.ts';
 import { formatClock } from '../domain/sale.ts';
 import type { CollectMethod } from '../domain/sale.ts';
-import { SEED_CUSTOMERS } from '../domain/customer.ts';
+import { useCustomers } from '../state/CustomersContext.tsx';
 
 const OPTIONS: { id: CollectMethod; label: string }[] = [
   { id: 'efectivo', label: 'Efectivo' },
@@ -13,6 +13,7 @@ const OPTIONS: { id: CollectMethod; label: string }[] = [
 ];
 
 export function CollectFiado() {
+  const { customers } = useCustomers();
   const { id = '' } = useParams();
   const { sales, collectFiado } = useSales();
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export function CollectFiado() {
   const sale = sales.find((s) => s.id === id);
   const pending = !!sale && sale.method === 'fiado' && sale.status === 'guardada' && !sale.collectedAt;
   if (!sale || (!pending && !busy)) return <Navigate to="/fiados" replace />;
-  const customer = SEED_CUSTOMERS.find((c) => c.id === sale.customerId);
+  const customer = customers.find((c) => c.id === sale.customerId);
 
   const confirm = async () => {
     if (!method) { setError('Elige cómo te pagó: efectivo o Yape / Plin.'); return; }

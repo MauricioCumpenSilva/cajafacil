@@ -31,7 +31,9 @@ Para agregar una mejora (por ejemplo un aviso al guardar la venta): se agrega un
 3. **Nueva venta** (hecha): teclado con punto decimal, atajos, botón +, método de pago (Efectivo con vuelto, Yape/Plin, Fiado), guardar, venta guardada y salir sin guardar. Inicio suma lo cobrado hoy.
 4. **Historial, balance y seguridad** (hecha): Ventas de hoy (Guardadas/Anuladas), detalle, anulación con confirmación, Balance (Hoy/Semana/Quincena/Mes). Bloqueo por clave errada (3 fallos → 30 s, luego 60, 120, 240, máx. 300 s; persiste al recargar) y pantallas de espera ("Entrando…", "Creando tu cuenta…", "Guardando…", "Anulando…").
 5. **Fiados, cuenta, ayuda y sin conexión** (hecha): Fiados por cliente con cobro (Efectivo o Yape; suma el día del cobro), Mi cuenta con respaldo simulado (automático al volver internet), indicador "Paso X de Y" en cada proceso, botón ? con ayuda paso a paso que resalta qué tocar, globo de ayuda la primera vez o tras 25 s sin tocar nada, página Ayuda, y modo sin conexión (service worker + manifest instalable).
-6. Accesibilidad completa y reporte WAVE o axe.
+6. **Accesibilidad** (hecha, ver `ACCESIBILIDAD.md`): foco y título por pantalla, ayuda que devuelve el foco, reducir movimiento, contraste y área táctil comprobados por prueba, y `e2e/smoke.cjs` (recorrido completo en navegador real con revisión de accesibilidad).
+
+También: clientes nuevos para fiado (nombre libre, sin repetidos), avatar elegido visible en Inicio con saludo "Hola, nombre" y globo de bienvenida (primera vez del día / "Hola de nuevo" al reabrir).
 
 ## Accesibilidad ya aplicada en la etapa 1
 

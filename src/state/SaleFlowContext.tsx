@@ -4,7 +4,6 @@ import { calcReducer, initialCalc, totalCents } from '../domain/calculator.ts';
 import type { CalcAction, CalcState } from '../domain/calculator.ts';
 import type { Cents } from '../domain/money.ts';
 import type { PaymentMethod, Sale } from '../domain/sale.ts';
-import { DEFAULT_CUSTOMER_ID } from '../domain/customer.ts';
 import { useSales } from './SalesContext.tsx';
 
 interface SaleFlowApi {
@@ -32,7 +31,7 @@ export function SaleFlowProvider({ children }: { children: ReactNode }) {
   const [calc, dispatch] = useReducer(calcReducer, initialCalc);
   const [method, setMethod] = useState<PaymentMethod>('efectivo');
   const [paidCents, setPaidCents] = useState<Cents | null>(null);
-  const [customerId, setCustomerId] = useState<string>(DEFAULT_CUSTOMER_ID);
+  const [customerId, setCustomerId] = useState<string>('');
   const [lastSale, setLastSale] = useState<Sale | null>(null);
   const total = totalCents(calc);
 
@@ -40,7 +39,7 @@ export function SaleFlowProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'clear' });
     setMethod('efectivo');
     setPaidCents(null);
-    setCustomerId(DEFAULT_CUSTOMER_ID);
+    setCustomerId('');
   }, []);
 
   const save = useCallback(async () => {

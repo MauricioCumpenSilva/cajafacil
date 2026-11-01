@@ -2,14 +2,15 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { useSales } from '../state/SalesContext.tsx';
 import { formatSoles } from '../domain/money.ts';
 import { formatClock } from '../domain/sale.ts';
-import { SEED_CUSTOMERS } from '../domain/customer.ts';
+import { useCustomers } from '../state/CustomersContext.tsx';
 
 export function FiadoCollected() {
+  const { customers } = useCustomers();
   const { id = '' } = useParams();
   const { sales } = useSales();
   const sale = sales.find((s) => s.id === id);
   if (!sale || !sale.collectedAt) return <Navigate to="/fiados" replace />;
-  const customer = SEED_CUSTOMERS.find((c) => c.id === sale.customerId);
+  const customer = customers.find((c) => c.id === sale.customerId);
 
   return (
     <>

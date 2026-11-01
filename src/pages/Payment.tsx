@@ -1,3 +1,4 @@
+import { NewCustomer } from '../ui/NewCustomer.tsx';
 import { Spinner } from '../ui/Spinner.tsx';
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { useSaleFlow } from '../state/SaleFlowContext.tsx';
 import { paymentStatus, PAID_CHIPS_CENTS } from '../domain/payment.ts';
 import { formatSoles } from '../domain/money.ts';
 import { DomainError } from '../domain/errors.ts';
-import { SEED_CUSTOMERS } from '../domain/customer.ts';
+import { useCustomers } from '../state/CustomersContext.tsx';
 import type { PaymentMethod } from '../domain/sale.ts';
 
 const METHODS: { id: PaymentMethod; label: string }[] = [
@@ -15,6 +16,7 @@ const METHODS: { id: PaymentMethod; label: string }[] = [
 ];
 
 export function Payment() {
+  const { customers } = useCustomers();
   const flow = useSaleFlow();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export function Payment() {
   if (flow.total <= 0 && !saving) return <Navigate to="/venta" replace />;
 
   const status = paymentStatus(flow.total, flow.paidCents);
-  const customer = SEED_CUSTOMERS.find((c) => c.id === flow.customerId) ?? SEED_CUSTOMERS[0];
+  const customer = customers.find((c) => c.id === flow.customerId);
 
   const choose = (m: PaymentMethod) => { setError(null); flow.setMethod(m); };
 
@@ -83,14 +85,15 @@ export function Payment() {
       {flow.method === 'fiado' && (
         <fieldset className="stack customer-set">
           <legend className="h2">¿A quién se le fía?</legend>
-          {SEED_CUSTOMERS.map((c) => (
+          {customers.map((c) => (
             <label key={c.id} className={flow.customerId === c.id ? 'choice choice--on' : 'choice'}>
               <input type="radio" name="cliente" value={c.id} checked={flow.customerId === c.id}
                 onChange={() => flow.setCustomerId(c.id)} className="sr-only" />
               {c.name}
             </label>
           ))}
-          <p style={{ margin: 0 }}>Se anota como deuda de {customer.name}. No suma a lo cobrado hoy hasta que pague.</p>
+          <NewCustomer onAdded={(id) => flow.setCustomerId(id)} />
+          <p style={{ margin: 0 }}>{customer ? `Se anota como deuda de ${customer.name}. No suma a lo cobrado hoy hasta que pague.` : 'Elige un cliente o agrega uno nuevo.'}</p>
         </fieldset>
       )}
 

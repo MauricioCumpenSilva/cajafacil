@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import App from './App.tsx';
 import { AccountProvider } from './state/AccountContext.tsx';
+import { CustomersProvider } from './state/CustomersContext.tsx';
 import { BackupProvider } from './state/BackupContext.tsx';
 import { SaleFlowProvider } from './state/SaleFlowContext.tsx';
 import { SalesProvider } from './state/SalesContext.tsx';
@@ -20,9 +21,11 @@ createRoot(document.getElementById('root')!).render(
       <AccountProvider>
         <SalesProvider>
           <BackupProvider>
-            <SaleFlowProvider>
-              <App />
-            </SaleFlowProvider>
+            <CustomersProvider>
+              <SaleFlowProvider>
+                <App />
+              </SaleFlowProvider>
+            </CustomersProvider>
           </BackupProvider>
         </SalesProvider>
       </AccountProvider>

@@ -2,15 +2,16 @@ import { METHOD_LABEL } from '../domain/sale.ts';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSaleFlow } from '../state/SaleFlowContext.tsx';
 import { formatSoles } from '../domain/money.ts';
-import { SEED_CUSTOMERS } from '../domain/customer.ts';
+import { useCustomers } from '../state/CustomersContext.tsx';
 
 
 export function SaleDone() {
+  const { customers } = useCustomers();
   const { lastSale, reset } = useSaleFlow();
   const navigate = useNavigate();
   if (!lastSale) return <Navigate to="/inicio" replace />;
   const fiado = lastSale.method === 'fiado';
-  const customer = SEED_CUSTOMERS.find((c) => c.id === lastSale.customerId);
+  const customer = customers.find((c) => c.id === lastSale.customerId);
 
   return (
     <div className="stack" style={{ textAlign: 'center' }}>

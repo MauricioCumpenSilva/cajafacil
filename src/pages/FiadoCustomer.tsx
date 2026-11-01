@@ -1,13 +1,14 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useSales } from '../state/SalesContext.tsx';
 import { formatClock, localDayKey, pendingFiados } from '../domain/sale.ts';
-import { SEED_CUSTOMERS } from '../domain/customer.ts';
+import { useCustomers } from '../state/CustomersContext.tsx';
 import { formatSoles, sumCents } from '../domain/money.ts';
 
 export function FiadoCustomer() {
+  const { customers } = useCustomers();
   const { cliente = '' } = useParams();
   const { sales } = useSales();
-  const customer = SEED_CUSTOMERS.find((c) => c.id === cliente);
+  const customer = customers.find((c) => c.id === cliente);
   if (!customer) return <Navigate to="/fiados" replace />;
   const list = pendingFiados(sales).filter((s) => s.customerId === customer.id);
   const today = localDayKey(new Date());

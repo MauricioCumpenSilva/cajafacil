@@ -5,6 +5,7 @@ import { LocalStorageAccountRepository } from '../data/accountRepository.ts';
 import type { Account, Avatar, LoginResult } from '../domain/account.ts';
 import { attemptLogin, digitsOnly } from '../domain/account.ts';
 import type { LockoutState } from '../domain/lockout.ts';
+import { resetAnnounced } from './greetingState.ts';
 import type { BackupState } from '../domain/backup.ts';
 
 /** Datos del registro mientras el usuario avanza por los pasos de crear cuenta. */
@@ -60,7 +61,7 @@ export function AccountProvider({ children, repo }: { children: ReactNode; repo?
     return result;
   }, [account, lockout, repository]);
 
-  const signOut = useCallback(() => { repository.setSignedIn(false); setSignedIn(false); }, [repository]);
+  const signOut = useCallback(() => { resetAnnounced(); repository.setSignedIn(false); setSignedIn(false); }, [repository]);
 
   const value = useMemo(
     () => ({ account, signedIn, draft, updateDraft, finishSignUp, lockedUntil: lockout.lockedUntil, backup, saveBackup, signIn, signOut }),

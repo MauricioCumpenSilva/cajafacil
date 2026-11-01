@@ -17,6 +17,7 @@ body {
   position: absolute; left: var(--space-3); top: -100px;
   background: var(--color-text); color: #fff; padding: var(--space-2) var(--space-3);
   border-radius: var(--radius); z-index: 10; text-decoration: none; font-weight: 700;
+  display: inline-flex; align-items: center; min-height: var(--tap);
 }
 .skip-link:focus { top: var(--space-2); }
 
@@ -156,3 +157,19 @@ main.help-open { padding-bottom: 320px; }
 .account { display: flex; align-items: center; gap: var(--space-3); }
 .help-topic summary { font-weight: 700; min-height: var(--tap); display: flex; align-items: center; cursor: pointer; }
 .help-steps { margin: var(--space-2) 0 0; padding-left: var(--space-4); display: grid; gap: var(--space-2); }
+
+/* Saludo y avatar */
+.hello { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+.hello__title { margin: 0; }
+.bubble { position: relative; background: var(--color-surface); border: 3px solid var(--color-primary); border-radius: var(--radius); padding: var(--space-3); display: grid; gap: var(--space-2); justify-items: start; margin-bottom: var(--space-4); }
+.bubble__text { margin: 0; font-size: 1.125rem; font-weight: 700; }
+.bubble__arrow { position: absolute; left: 50%; bottom: -34px; transform: translateX(-50%); font-size: 1.75rem; line-height: 1; color: var(--color-primary); animation: bob 1s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateX(-50%) translateY(6px); } }
+.btn--attention { animation: attention 1.4s ease-in-out infinite; }
+@keyframes attention { 50% { box-shadow: 0 0 0 6px rgba(27, 127, 59, .35); } }
+@media (prefers-reduced-motion: reduce) { .bubble__arrow, .btn--attention { animation: none; } }
+
+/* Accesibilidad: quien pide menos movimiento no ve animaciones (la rueda de espera solo se ralentiza). */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.spinner), *:not(.spinner)::before, *:not(.spinner)::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
