@@ -12,6 +12,7 @@ export function Layout() {
   const onBack = () => {
     if (pathname === '/venta') navigate(total > 0 ? '/venta/salir' : '/inicio');
     else if (pathname === '/venta/pago') navigate('/venta');
+    else if (pathname === '/ventas' || pathname === '/ventas/anuladas' || pathname === '/balance') navigate('/inicio');
     else if (pathname === '/venta/listo' || pathname === '/venta/salir') navigate('/inicio');
     else navigate(-1);
   };

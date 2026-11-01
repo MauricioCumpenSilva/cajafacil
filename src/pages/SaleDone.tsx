@@ -1,9 +1,9 @@
+import { METHOD_LABEL } from '../domain/sale.ts';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSaleFlow } from '../state/SaleFlowContext.tsx';
 import { formatSoles } from '../domain/money.ts';
 import { SEED_CUSTOMERS } from '../domain/customer.ts';
 
-const METHOD_LABEL = { efectivo: 'Efectivo', yape: 'Yape / Plin', fiado: 'Fiado' } as const;
 
 export function SaleDone() {
   const { lastSale, reset } = useSaleFlow();

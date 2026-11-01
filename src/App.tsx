@@ -12,6 +12,10 @@ import { NewSale } from './pages/NewSale.tsx';
 import { Payment } from './pages/Payment.tsx';
 import { SaleDone } from './pages/SaleDone.tsx';
 import { ExitSale } from './pages/ExitSale.tsx';
+import { SalesList } from './pages/SalesList.tsx';
+import { SaleDetail } from './pages/SaleDetail.tsx';
+import { ConfirmVoid } from './pages/ConfirmVoid.tsx';
+import { Balance } from './pages/Balance.tsx';
 import { RequireAccount } from './ui/RequireAccount.tsx';
 
 export default function App() {
@@ -33,9 +37,11 @@ export default function App() {
         <Route path="venta/listo" element={<SaleDone />} />
         <Route path="venta/salir" element={<ExitSale />} />
         {/* Etapa 4: historial y balance */}
-        <Route path="ventas" element={<Pending title="Ventas de hoy" stage={4} />} />
-        <Route path="ventas/:id" element={<Pending title="Detalle de la venta" stage={4} />} />
-        <Route path="balance" element={<Pending title="Balance" stage={4} />} />
+        <Route path="ventas" element={<SalesList />} />
+        <Route path="ventas/anuladas" element={<SalesList voided />} />
+        <Route path="ventas/:id" element={<SaleDetail />} />
+        <Route path="ventas/:id/anular" element={<ConfirmVoid />} />
+        <Route path="balance" element={<Balance />} />
         {/* Etapa 5: fiados y cuenta */}
         <Route path="fiados" element={<Pending title="Fiados" stage={5} />} />
         <Route path="cuenta" element={<Pending title="Mi cuenta" stage={5} />} />

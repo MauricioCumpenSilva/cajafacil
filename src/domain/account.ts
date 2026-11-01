@@ -1,3 +1,6 @@
+import type { LockoutState } from './lockout.ts';
+import { attemptsLeft, initialLockout, isLocked, registerFailure, remainingMs, secondsLeft } from './lockout.ts';
+
 export type Avatar = 'bodeguero' | 'bodeguera';
 
 /** Cuenta SIMULADA (como en el PA2): se guarda en el dispositivo, sin servidor. */
@@ -32,7 +35,7 @@ export function validatePin(raw: string): string | null {
 
 export type LoginResult =
   | { ok: true }
-  | { ok: false; reason: 'sin-cuenta' | 'datos-incorrectos'; message: string };
+  | { ok: false; reason: 'sin-cuenta' | 'datos-incorrectos' | 'bloqueado'; message: string; remainingMs?: number };
 
 /** "Ya tengo cuenta" solo funciona si la cuenta fue creada y los datos coinciden. */
 export function checkLogin(account: Account | null, phone: string, pin: string): LoginResult {
@@ -43,4 +46,28 @@ export function checkLogin(account: Account | null, phone: string, pin: string):
     return { ok: false, reason: 'datos-incorrectos', message: 'El celular o la clave no son correctos. Revísalos e inténtalo de nuevo.' };
   }
   return { ok: true };
+}
+
+const waitMessage = (ms: number) => `Por seguridad, espera ${secondsLeft(ms)} segundos para volver a intentar.`;
+
+/** Un intento de entrar, con bloqueo temporal. Devuelve el resultado y el nuevo estado de bloqueo. */
+export function attemptLogin(
+  account: Account | null, lockout: LockoutState, phone: string, pin: string, now: number,
+): { result: LoginResult; lockout: LockoutState } {
+  if (isLocked(lockout, now)) {
+    const ms = remainingMs(lockout, now);
+    return { result: { ok: false, reason: 'bloqueado', message: waitMessage(ms), remainingMs: ms }, lockout };
+  }
+  const r = checkLogin(account, phone, pin);
+  if (r.ok) return { result: r, lockout: initialLockout };
+  if (r.reason === 'sin-cuenta') return { result: r, lockout };
+
+  const next = registerFailure(lockout, now);
+  if (isLocked(next, now)) {
+    const ms = remainingMs(next, now);
+    return { result: { ok: false, reason: 'bloqueado', message: `La clave no es correcta. ${waitMessage(ms)}`, remainingMs: ms }, lockout: next };
+  }
+  const left = attemptsLeft(next);
+  const tail = left === 1 ? 'Te queda 1 intento.' : `Te quedan ${left} intentos.`;
+  return { result: { ok: false, reason: 'datos-incorrectos', message: `El celular o la clave no son correctos. ${tail}` }, lockout: next };
 }

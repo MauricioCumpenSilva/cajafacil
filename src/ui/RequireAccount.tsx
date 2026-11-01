@@ -1,8 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAccount } from '../state/AccountContext.tsx';
+import { useSales } from '../state/SalesContext.tsx';
+import { LoadingScreen } from './Spinner.tsx';
 
-/** Las pantallas internas solo se abren con la sesión iniciada. */
 export function RequireAccount() {
   const { signedIn } = useAccount();
-  return signedIn ? <Outlet /> : <Navigate to="/" replace />;
+  const { ready } = useSales();
+  if (!signedIn) return <Navigate to="/" replace />;
+  if (!ready) return <LoadingScreen text="Abriendo tus ventas…" />;
+  return <Outlet />;
 }

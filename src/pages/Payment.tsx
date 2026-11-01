@@ -1,3 +1,4 @@
+import { Spinner } from '../ui/Spinner.tsx';
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useSaleFlow } from '../state/SaleFlowContext.tsx';
@@ -95,8 +96,8 @@ export function Payment() {
       )}
 
       {error && <p className="field__error" role="alert"><span aria-hidden="true">⚠ </span>{error}</p>}
-      <button type="button" className="btn btn--primary" disabled={saving} onClick={save}>
-        {flow.method === 'fiado' ? 'Guardar fiado' : 'Guardar venta'}
+      <button type="button" className="btn btn--primary" disabled={saving} aria-busy={saving} onClick={save}>
+        {saving ? <><Spinner /> Guardando…</> : flow.method === 'fiado' ? 'Guardar fiado' : 'Guardar venta'}
       </button>
     </>
   );

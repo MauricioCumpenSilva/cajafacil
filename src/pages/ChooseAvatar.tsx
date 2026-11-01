@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from '../state/AccountContext.tsx';
 import type { Avatar } from '../domain/account.ts';
+import { LoadingScreen } from '../ui/Spinner.tsx';
 import { AvatarImage } from '../ui/Brand.tsx';
 
 const OPTIONS: { kind: Avatar; label: string }[] = [
@@ -11,7 +13,15 @@ const OPTIONS: { kind: Avatar; label: string }[] = [
 export function ChooseAvatar() {
   const { draft, updateDraft, finishSignUp } = useAccount();
   const navigate = useNavigate();
-  const start = () => { finishSignUp(); navigate('/inicio', { replace: true }); };
+  const [creating, setCreating] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const start = () => {
+    setCreating(true);
+    // Pausa breve y visible: la cuenta es simulada, pero el usuario debe ver que algo ocurre.
+    timer.current = window.setTimeout(() => { finishSignUp(); navigate('/inicio', { replace: true }); }, 900);
+  };
+  if (creating) return <LoadingScreen text="Creando tu cuenta…" />;
   return (
     <>
       <h1>Tu imagen</h1>

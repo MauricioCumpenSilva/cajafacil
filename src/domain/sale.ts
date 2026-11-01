@@ -2,6 +2,7 @@ import type { Cents } from './money.ts';
 import { DomainError } from './errors.ts';
 
 export type PaymentMethod = 'efectivo' | 'yape' | 'fiado';
+export const METHOD_LABEL = { efectivo: 'Efectivo', yape: 'Yape / Plin', fiado: 'Fiado' } as const;
 export type SaleStatus = 'guardada' | 'anulada';
 
 export interface Sale {
@@ -62,10 +63,9 @@ export interface DayTotals {
   voidedCount: number;
 }
 
-export function dayTotals(sales: readonly Sale[], day: string): DayTotals {
+function accumulate(sales: readonly Sale[]): DayTotals {
   const t: DayTotals = { totalCents: 0, efectivoCents: 0, yapeCents: 0, count: 0, voidedCount: 0 };
   for (const s of sales) {
-    if (localDayKey(new Date(s.createdAt)) !== day) continue;
     if (s.status === 'anulada') { t.voidedCount += 1; continue; }
     if (s.method === 'fiado') continue;
     t.count += 1;
@@ -74,6 +74,27 @@ export function dayTotals(sales: readonly Sale[], day: string): DayTotals {
     else t.yapeCents += s.amountCents;
   }
   return t;
+}
+
+export function dayTotals(sales: readonly Sale[], day: string): DayTotals {
+  return accumulate(sales.filter((s) => localDayKey(new Date(s.createdAt)) === day));
+}
+
+/** Totales de los últimos `days` días, contando hoy (1 = solo hoy). */
+export function rangeTotals(sales: readonly Sale[], days: number, now: Date): DayTotals {
+  const start = localDayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1)));
+  const end = localDayKey(now);
+  return accumulate(sales.filter((s) => {
+    const k = localDayKey(new Date(s.createdAt));
+    return k >= start && k <= end;
+  }));
+}
+
+/** Hora local "15:12". */
+export function formatClock(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
 /** Más recientes primero. */

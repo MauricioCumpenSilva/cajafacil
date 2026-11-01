@@ -102,3 +102,33 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .btn--danger { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
 .done-check { margin: 0; width: 72px; height: 72px; line-height: 72px; justify-self: center; border-radius: 50%; background: var(--color-primary); color: #fff; font-size: 2.5rem; font-weight: 800; }
 .detail-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }
+
+/* Etapa 4: espera, bloqueo, listas y balance */
+.spinner { display: inline-block; width: 1.25em; height: 1.25em; margin-right: var(--space-2); border: 3px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -0.2em; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-4) 0; color: var(--color-primary); }
+.loading .spinner { width: 56px; height: 56px; margin: 0; border-width: 6px; }
+.loading__text { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--color-text); }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } .wait__fill { transition: none; } }
+.wait { background: var(--color-warn-bg); border: 2px solid var(--color-fiado); border-radius: var(--radius); padding: var(--space-3); display: grid; gap: var(--space-2); }
+.wait__title { margin: 0; font-weight: 800; font-size: 1.125rem; }
+.wait__hint { margin: 0; color: var(--color-text-soft); }
+.wait__bar { height: 12px; border-radius: 999px; background: #fff; border: 2px solid var(--color-fiado); overflow: hidden; }
+.wait__fill { height: 100%; background: var(--color-fiado); transition: width 1s linear; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-3); }
+.tab { min-height: var(--tap); display: grid; place-items: center; border: 2px solid var(--color-border); border-radius: var(--radius); font-weight: 700; color: var(--color-text); text-decoration: none; background: var(--color-surface); }
+.tab[aria-current="page"] { background: var(--color-text); color: #fff; border-color: var(--color-text); }
+.sale-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+.sale-row { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3); align-items: center; min-height: 64px; padding: var(--space-2) var(--space-3); background: var(--color-surface); border: 2px solid var(--color-border); border-radius: var(--radius); color: var(--color-text); text-decoration: none; }
+.sale-row__amount { font-weight: 800; font-size: 1.125rem; }
+.badge { font-weight: 700; }
+.badge--ok { color: var(--color-primary); }
+.badge--void { color: var(--color-danger); }
+.periods { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); margin-bottom: var(--space-3); }
+.periods .chip { padding: 0 var(--space-1); }
+.totals { display: grid; gap: var(--space-2); margin: 0; }
+.totals div { display: flex; justify-content: space-between; gap: var(--space-3); }
+.totals dt { font-weight: 600; }
+.totals dd { margin: 0; font-weight: 800; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }

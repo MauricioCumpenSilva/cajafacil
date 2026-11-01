@@ -3,7 +3,8 @@ import type { ReactNode } from 'react';
 import type { AccountRepository } from '../data/accountRepository.ts';
 import { LocalStorageAccountRepository } from '../data/accountRepository.ts';
 import type { Account, Avatar, LoginResult } from '../domain/account.ts';
-import { checkLogin, digitsOnly } from '../domain/account.ts';
+import { attemptLogin, digitsOnly } from '../domain/account.ts';
+import type { LockoutState } from '../domain/lockout.ts';
 
 /** Datos del registro mientras el usuario avanza por los pasos de crear cuenta. */
 export interface SignUpDraft {
@@ -21,6 +22,8 @@ interface AccountApi {
   draft: SignUpDraft;
   updateDraft(patch: Partial<SignUpDraft>): void;
   finishSignUp(): void;
+  /** Tiempo (ms desde 1970) hasta el que no se puede intentar entrar; null si no hay bloqueo. */
+  lockedUntil: number | null;
   signIn(phone: string, pin: string): LoginResult;
   signOut(): void;
 }
@@ -31,6 +34,7 @@ export function AccountProvider({ children, repo }: { children: ReactNode; repo?
   const [repository] = useState<AccountRepository>(() => repo ?? new LocalStorageAccountRepository());
   const [account, setAccount] = useState<Account | null>(() => repository.load());
   const [signedIn, setSignedIn] = useState<boolean>(() => repository.isSignedIn() && repository.load() !== null);
+  const [lockout, setLockout] = useState<LockoutState>(() => repository.loadLockout());
   const [draft, setDraft] = useState<SignUpDraft>(emptyDraft);
 
   const updateDraft = useCallback((patch: Partial<SignUpDraft>) => setDraft((d) => ({ ...d, ...patch })), []);
@@ -45,16 +49,17 @@ export function AccountProvider({ children, repo }: { children: ReactNode; repo?
   }, [draft, repository]);
 
   const signIn = useCallback((phone: string, pin: string): LoginResult => {
-    const result = checkLogin(account, phone, pin);
+    const { result, lockout: next } = attemptLogin(account, lockout, phone, pin, Date.now());
+    if (next !== lockout) { repository.saveLockout(next); setLockout(next); }
     if (result.ok) { repository.setSignedIn(true); setSignedIn(true); }
     return result;
-  }, [account, repository]);
+  }, [account, lockout, repository]);
 
   const signOut = useCallback(() => { repository.setSignedIn(false); setSignedIn(false); }, [repository]);
 
   const value = useMemo(
-    () => ({ account, signedIn, draft, updateDraft, finishSignUp, signIn, signOut }),
-    [account, signedIn, draft, updateDraft, finishSignUp, signIn, signOut],
+    () => ({ account, signedIn, draft, updateDraft, finishSignUp, lockedUntil: lockout.lockedUntil, signIn, signOut }),
+    [account, signedIn, draft, updateDraft, finishSignUp, lockout.lockedUntil, signIn, signOut],
   );
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }
