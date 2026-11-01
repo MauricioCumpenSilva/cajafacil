@@ -3,6 +3,7 @@ import { DomainError } from './errors.ts';
 
 export type PaymentMethod = 'efectivo' | 'yape' | 'fiado';
 export const METHOD_LABEL = { efectivo: 'Efectivo', yape: 'Yape / Plin', fiado: 'Fiado' } as const;
+export type CollectMethod = 'efectivo' | 'yape';
 export type SaleStatus = 'guardada' | 'anulada';
 
 export interface Sale {
@@ -15,6 +16,8 @@ export interface Sale {
   changeCents?: Cents; // vuelto, solo efectivo
   customerId?: string; // solo fiado
   voidedAt?: string;
+  collectedAt?: string; // solo fiado: cuándo se cobró
+  collectedMethod?: CollectMethod; // solo fiado: cómo pagó el cliente
 }
 
 export interface NewSaleInput {
@@ -63,31 +66,74 @@ export interface DayTotals {
   voidedCount: number;
 }
 
-function accumulate(sales: readonly Sale[]): DayTotals {
+/**
+ * Suma lo cobrado. `inRange` decide si una fecha cuenta.
+ * Un fiado suma el día en que se COBRA (con la forma en que pagó), nunca el día que se anotó.
+ */
+function accumulate(sales: readonly Sale[], inRange: (iso: string) => boolean): DayTotals {
   const t: DayTotals = { totalCents: 0, efectivoCents: 0, yapeCents: 0, count: 0, voidedCount: 0 };
-  for (const s of sales) {
-    if (s.status === 'anulada') { t.voidedCount += 1; continue; }
-    if (s.method === 'fiado') continue;
+  const add = (method: CollectMethod, cents: Cents) => {
     t.count += 1;
-    t.totalCents += s.amountCents;
-    if (s.method === 'efectivo') t.efectivoCents += s.amountCents;
-    else t.yapeCents += s.amountCents;
+    t.totalCents += cents;
+    if (method === 'efectivo') t.efectivoCents += cents;
+    else t.yapeCents += cents;
+  };
+  for (const s of sales) {
+    if (s.status === 'anulada') { if (inRange(s.createdAt)) t.voidedCount += 1; continue; }
+    if (s.method === 'fiado') {
+      if (s.collectedAt && s.collectedMethod && inRange(s.collectedAt)) add(s.collectedMethod, s.amountCents);
+      continue;
+    }
+    if (inRange(s.createdAt)) add(s.method, s.amountCents);
   }
   return t;
 }
 
 export function dayTotals(sales: readonly Sale[], day: string): DayTotals {
-  return accumulate(sales.filter((s) => localDayKey(new Date(s.createdAt)) === day));
+  return accumulate(sales, (iso) => localDayKey(new Date(iso)) === day);
 }
 
 /** Totales de los últimos `days` días, contando hoy (1 = solo hoy). */
 export function rangeTotals(sales: readonly Sale[], days: number, now: Date): DayTotals {
   const start = localDayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1)));
   const end = localDayKey(now);
-  return accumulate(sales.filter((s) => {
-    const k = localDayKey(new Date(s.createdAt));
-    return k >= start && k <= end;
-  }));
+  return accumulate(sales, (iso) => { const k = localDayKey(new Date(iso)); return k >= start && k <= end; });
+}
+
+/** Marca un fiado como cobrado. Desde ese momento suma a lo cobrado. */
+export function collectSale(sale: Sale, method: CollectMethod, now: Date = new Date()): Sale {
+  if (sale.method !== 'fiado') throw new DomainError('NO_ES_FIADO');
+  if (sale.status === 'anulada') throw new DomainError('YA_ANULADA');
+  if (sale.collectedAt) throw new DomainError('YA_COBRADO');
+  if (method !== 'efectivo' && method !== 'yape') throw new DomainError('COBRO_INVALIDO');
+  return { ...sale, collectedAt: now.toISOString(), collectedMethod: method };
+}
+
+/** Fiados que todavía se deben (guardados y sin cobrar), los más antiguos primero. */
+export function pendingFiados(sales: readonly Sale[]): Sale[] {
+  return sales
+    .filter((s) => s.method === 'fiado' && s.status === 'guardada' && !s.collectedAt)
+    .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
+}
+
+export interface Debt { customerId: string; totalCents: Cents; count: number }
+
+/** Deuda por cliente; solo clientes que deben algo. Mayor deuda primero. */
+export function debtByCustomer(sales: readonly Sale[]): Debt[] {
+  const map = new Map<string, Debt>();
+  for (const s of pendingFiados(sales)) {
+    if (!s.customerId) continue;
+    const d = map.get(s.customerId) ?? { customerId: s.customerId, totalCents: 0, count: 0 };
+    d.totalCents += s.amountCents;
+    d.count += 1;
+    map.set(s.customerId, d);
+  }
+  return [...map.values()].sort((a, b) => b.totalCents - a.totalCents);
+}
+
+/** Último momento en que la venta cambió (creada, anulada o cobrada). */
+export function lastActivity(s: Sale): string {
+  return [s.createdAt, s.voidedAt, s.collectedAt].filter((x): x is string => !!x).sort().at(-1) ?? s.createdAt;
 }
 
 /** Hora local "15:12". */

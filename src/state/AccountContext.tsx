@@ -5,6 +5,7 @@ import { LocalStorageAccountRepository } from '../data/accountRepository.ts';
 import type { Account, Avatar, LoginResult } from '../domain/account.ts';
 import { attemptLogin, digitsOnly } from '../domain/account.ts';
 import type { LockoutState } from '../domain/lockout.ts';
+import type { BackupState } from '../domain/backup.ts';
 
 /** Datos del registro mientras el usuario avanza por los pasos de crear cuenta. */
 export interface SignUpDraft {
@@ -24,6 +25,8 @@ interface AccountApi {
   finishSignUp(): void;
   /** Tiempo (ms desde 1970) hasta el que no se puede intentar entrar; null si no hay bloqueo. */
   lockedUntil: number | null;
+  backup: BackupState;
+  saveBackup(state: BackupState): void;
   signIn(phone: string, pin: string): LoginResult;
   signOut(): void;
 }
@@ -35,6 +38,8 @@ export function AccountProvider({ children, repo }: { children: ReactNode; repo?
   const [account, setAccount] = useState<Account | null>(() => repository.load());
   const [signedIn, setSignedIn] = useState<boolean>(() => repository.isSignedIn() && repository.load() !== null);
   const [lockout, setLockout] = useState<LockoutState>(() => repository.loadLockout());
+  const [backup, setBackup] = useState<BackupState>(() => repository.loadBackup());
+  const saveBackup = useCallback((b: BackupState) => { repository.saveBackup(b); setBackup(b); }, [repository]);
   const [draft, setDraft] = useState<SignUpDraft>(emptyDraft);
 
   const updateDraft = useCallback((patch: Partial<SignUpDraft>) => setDraft((d) => ({ ...d, ...patch })), []);
@@ -58,8 +63,8 @@ export function AccountProvider({ children, repo }: { children: ReactNode; repo?
   const signOut = useCallback(() => { repository.setSignedIn(false); setSignedIn(false); }, [repository]);
 
   const value = useMemo(
-    () => ({ account, signedIn, draft, updateDraft, finishSignUp, lockedUntil: lockout.lockedUntil, signIn, signOut }),
-    [account, signedIn, draft, updateDraft, finishSignUp, lockout.lockedUntil, signIn, signOut],
+    () => ({ account, signedIn, draft, updateDraft, finishSignUp, lockedUntil: lockout.lockedUntil, backup, saveBackup, signIn, signOut }),
+    [account, signedIn, draft, updateDraft, finishSignUp, lockout.lockedUntil, backup, saveBackup, signIn, signOut],
   );
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }

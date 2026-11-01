@@ -1,6 +1,8 @@
 import type { Account } from '../domain/account.ts';
 import type { LockoutState } from '../domain/lockout.ts';
 import { initialLockout, isValidLockout } from '../domain/lockout.ts';
+import type { BackupState } from '../domain/backup.ts';
+import { initialBackup, isValidBackup } from '../domain/backup.ts';
 
 export interface AccountRepository {
   load(): Account | null;
@@ -9,6 +11,8 @@ export interface AccountRepository {
   setSignedIn(value: boolean): void;
   loadLockout(): LockoutState;
   saveLockout(state: LockoutState): void;
+  loadBackup(): BackupState;
+  saveBackup(state: BackupState): void;
 }
 
 export class InMemoryAccountRepository implements AccountRepository {
@@ -21,11 +25,15 @@ export class InMemoryAccountRepository implements AccountRepository {
   private lockout: LockoutState = initialLockout;
   loadLockout() { return this.lockout; }
   saveLockout(l: LockoutState) { this.lockout = l; }
+  private backup: BackupState = initialBackup;
+  loadBackup() { return this.backup; }
+  saveBackup(b: BackupState) { this.backup = b; }
 }
 
 const ACCOUNT_KEY = 'cajafacil.account.v1';
 const SESSION_KEY = 'cajafacil.session.v1';
 const LOCKOUT_KEY = 'cajafacil.lockout.v1';
+const BACKUP_KEY = 'cajafacil.backup.v1';
 
 export class LocalStorageAccountRepository implements AccountRepository {
   private account: Account | null | undefined;
@@ -75,5 +83,24 @@ export class LocalStorageAccountRepository implements AccountRepository {
   saveLockout(l: LockoutState): void {
     this.lockout = l;
     try { globalThis.localStorage?.setItem(LOCKOUT_KEY, JSON.stringify(l)); } catch { /* en memoria */ }
+  }
+
+  private backup: BackupState | undefined;
+
+  loadBackup(): BackupState {
+    if (this.backup) return this.backup;
+    try {
+      const raw = globalThis.localStorage?.getItem(BACKUP_KEY);
+      const parsed: unknown = raw ? JSON.parse(raw) : null;
+      this.backup = isValidBackup(parsed) ? parsed : initialBackup;
+    } catch {
+      this.backup = initialBackup;
+    }
+    return this.backup;
+  }
+
+  saveBackup(b: BackupState): void {
+    this.backup = b;
+    try { globalThis.localStorage?.setItem(BACKUP_KEY, JSON.stringify(b)); } catch { /* en memoria */ }
   }
 }

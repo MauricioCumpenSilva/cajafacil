@@ -132,3 +132,27 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .totals dt { font-weight: 600; }
 .totals dd { margin: 0; font-weight: 800; }
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+
+/* Etapa 5: pasos, ayuda, fiados y cuenta */
+.process { margin-bottom: var(--space-3); display: grid; gap: var(--space-2); }
+.process__dots { list-style: none; display: flex; gap: var(--space-2); padding: 0; margin: 0; }
+.dot { flex: 1; height: 10px; border-radius: 999px; background: #ece7df; border: 2px solid var(--color-border); }
+.dot--done { background: var(--color-primary); border-color: var(--color-primary); }
+.dot--now { background: var(--color-info); border-color: var(--color-info); }
+main.help-open { padding-bottom: 320px; }
+.help-target { outline: 4px solid var(--color-info); outline-offset: 4px; border-radius: var(--radius); animation: pulse 1.2s ease-in-out infinite; scroll-margin-bottom: 340px; }
+@keyframes pulse { 50% { outline-color: transparent; } }
+@media (prefers-reduced-motion: reduce) { .help-target { animation: none; } }
+.help-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--color-surface); border-top: 4px solid var(--color-info); border-radius: var(--radius) var(--radius) 0 0; padding: var(--space-3); display: grid; gap: var(--space-2); box-shadow: 0 -4px 16px rgba(0,0,0,.25); max-width: 640px; margin: 0 auto; }
+.help-sheet__head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.help-sheet__count { margin: 0; font-weight: 700; color: var(--color-info); }
+.help-sheet__text { margin: 0; font-size: 1.125rem; font-weight: 600; min-height: 3.2em; }
+.help-sheet__all { text-align: center; color: var(--color-info); font-weight: 700; min-height: var(--tap); display: grid; place-items: center; }
+.nudge { position: fixed; left: var(--space-3); right: var(--space-3); bottom: var(--space-3); z-index: 15; background: var(--color-surface); border: 3px solid var(--color-info); border-radius: var(--radius); padding: var(--space-3); display: grid; gap: var(--space-2); max-width: 600px; margin: 0 auto; box-shadow: 0 4px 16px rgba(0,0,0,.25); }
+.nudge__text { margin: 0; font-weight: 700; }
+.methods--2 { grid-template-columns: 1fr 1fr; margin-bottom: var(--space-3); }
+.method[aria-pressed="true"].method--efectivo { background: var(--color-primary); color: #fff; }
+.method[aria-pressed="true"].method--yape { background: var(--color-yape); color: #fff; }
+.account { display: flex; align-items: center; gap: var(--space-3); }
+.help-topic summary { font-weight: 700; min-height: var(--tap); display: flex; align-items: center; cursor: pointer; }
+.help-steps { margin: var(--space-2) 0 0; padding-left: var(--space-4); display: grid; gap: var(--space-2); }

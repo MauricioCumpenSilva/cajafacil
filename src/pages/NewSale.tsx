@@ -24,7 +24,6 @@ export function NewSale() {
 
   return (
     <>
-      <p className="step">Paso 1 de 2</p>
       <h1>¿Cuánto es la venta?</h1>
 
       <div className="display" aria-live="polite">

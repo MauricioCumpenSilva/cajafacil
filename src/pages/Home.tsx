@@ -2,11 +2,14 @@ import { Link } from 'react-router-dom';
 import { useSales } from '../state/SalesContext.tsx';
 import { dayTotals, localDayKey } from '../domain/sale.ts';
 import { formatSoles } from '../domain/money.ts';
+import { useBackup } from '../state/BackupContext.tsx';
+import { backupLabel } from '../domain/backup.ts';
 import { useOnline } from '../ui/useOnline.ts';
 
 export function Home() {
   const { sales } = useSales();
   const online = useOnline();
+  const backup = useBackup();
   const t = dayTotals(sales, localDayKey(new Date()));
 
   return (
@@ -22,6 +25,8 @@ export function Home() {
       <p className={online ? 'status' : 'status status--offline'} role="status">
         {online ? 'Con conexión' : 'Sin conexión · tus ventas se guardan en este celular'}
       </p>
+
+      <p style={{ margin: 'var(--space-2) 0 0' }}>{backup.running ? 'Respaldando…' : backupLabel(backup.pending, online, backup.lastBackupAt)}</p>
 
       <nav aria-label="Secciones" className="stack" style={{ marginTop: 'var(--space-3)' }}>
         <Link to="/venta" className="btn btn--primary">Nueva venta</Link>

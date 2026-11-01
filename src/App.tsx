@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './ui/Layout.tsx';
 import { Home } from './pages/Home.tsx';
-import { Pending } from './pages/Pending.tsx';
 import { Welcome } from './pages/Welcome.tsx';
 import { CreateAccount } from './pages/CreateAccount.tsx';
 import { VerifyCode } from './pages/VerifyCode.tsx';
@@ -16,6 +15,12 @@ import { SalesList } from './pages/SalesList.tsx';
 import { SaleDetail } from './pages/SaleDetail.tsx';
 import { ConfirmVoid } from './pages/ConfirmVoid.tsx';
 import { Balance } from './pages/Balance.tsx';
+import { Fiados } from './pages/Fiados.tsx';
+import { FiadoCustomer } from './pages/FiadoCustomer.tsx';
+import { CollectFiado } from './pages/CollectFiado.tsx';
+import { FiadoCollected } from './pages/FiadoCollected.tsx';
+import { AccountPage } from './pages/AccountPage.tsx';
+import { Help } from './pages/Help.tsx';
 import { RequireAccount } from './ui/RequireAccount.tsx';
 
 export default function App() {
@@ -28,7 +33,7 @@ export default function App() {
         <Route path="clave" element={<CreatePin />} />
         <Route path="imagen" element={<ChooseAvatar />} />
         <Route path="entrar" element={<Login />} />
-        <Route path="ayuda" element={<Pending title="Ayuda" stage={5} />} />
+        <Route path="ayuda" element={<Help />} />
         <Route element={<RequireAccount />}>
         <Route path="inicio" element={<Home />} />
         {/* Etapa 3: venta */}
@@ -43,8 +48,11 @@ export default function App() {
         <Route path="ventas/:id/anular" element={<ConfirmVoid />} />
         <Route path="balance" element={<Balance />} />
         {/* Etapa 5: fiados y cuenta */}
-        <Route path="fiados" element={<Pending title="Fiados" stage={5} />} />
-        <Route path="cuenta" element={<Pending title="Mi cuenta" stage={5} />} />
+        <Route path="fiados" element={<Fiados />} />
+        <Route path="fiados/:cliente" element={<FiadoCustomer />} />
+        <Route path="fiados/cobro/:id" element={<CollectFiado />} />
+        <Route path="fiados/cobrado/:id" element={<FiadoCollected />} />
+        <Route path="cuenta" element={<AccountPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/inicio" replace />} />
       </Route>

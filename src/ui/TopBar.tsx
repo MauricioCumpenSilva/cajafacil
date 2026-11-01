@@ -1,13 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   /** La pantalla de Inicio no muestra "Volver". */
   showBack?: boolean;
   /** Acción de Volver; por defecto regresa una pantalla. */
   onBack?: () => void;
+  /** Abre la ayuda de esta pantalla. */
+  onHelp?: () => void;
 }
 
-export function TopBar({ showBack = true, onBack }: Props) {
+export function TopBar({ showBack = true, onBack, onHelp }: Props) {
   const navigate = useNavigate();
   return (
     <header className="topbar">
@@ -18,9 +20,9 @@ export function TopBar({ showBack = true, onBack }: Props) {
       ) : (
         <span />
       )}
-      <Link to="/ayuda" className="btn btn--round" aria-label="Ayuda">
+      <button type="button" className="btn btn--round" aria-label="Ayuda" onClick={() => (onHelp ? onHelp() : navigate('/ayuda'))}>
         <span aria-hidden="true">?</span>
-      </Link>
+      </button>
     </header>
   );
 }

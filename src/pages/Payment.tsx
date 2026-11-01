@@ -46,7 +46,6 @@ export function Payment() {
 
   return (
     <>
-      <p className="step">Paso 2 de 2</p>
       <h1>¿Cómo pagó?</h1>
       <p className="display__amount display__amount--small">Total {formatSoles(flow.total)}</p>
 
